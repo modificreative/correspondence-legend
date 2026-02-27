@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORRESPONDENCE LEGEND // TERMINAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0) 50%,
+                rgba(0, 0, 0, 0.25) 51%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: scanline 10s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        .container {
+            width: fit-content;
+            max-width: 100%;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #0f0;
+        }
+
+        h1 {
+            font-size: 24px;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+            animation: flicker 3s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            45% { opacity: 0.95; }
+            50% { opacity: 0.9; }
+            55% { opacity: 0.95; }
+        }
+
+        .subtitle {
+            font-size: 12px;
+            opacity: 0.7;
+            letter-spacing: 2px;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            font-size: 11px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-letter {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #0f0;
+            font-weight: bold;
+        }
+
+        .grid-container {
+            overflow-x: auto;
+            border: 2px solid #0f0;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        table {
+            width: auto;
+            min-width: max-content;
+            border-collapse: collapse;
+            table-layout: fixed;
+            background: rgba(0, 20, 0, 0.8);
+        }
+
+        th, td {
+            border: 1px solid #0f0;
+            padding: 0;
+            text-align: center;
+            font-size: 11px;
+            width: 70px;
+            min-width: 70px;
+            height: 70px;
+        }
+
+        th {
+            background: rgba(0, 20, 0, 0.95);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            height: 40px;
+        }
+
+        th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 3;
+            background: rgba(0, 20, 0, 0.95);
+            box-shadow: 2px 0 6px rgba(0, 0, 0, 0.8);
+        }
+
+        .sign-cell {
+            font-weight: bold;
+            text-align: center;
+            padding: 4px;
+            width: 70px;
+            height: 70px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            box-shadow: 2px 0 6px rgba(0, 0, 0, 0.8);
+        }
+
+        .sign-cell:hover {
+            opacity: 0.8;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            z-index: 10;
+        }
+
+        .dignity-cell {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        .planet-cell {
+            width: 70px;
+            height: 70px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 4px;
+        }
+
+        .planet-cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            z-index: 10;
+        }
+
+        .planet-square {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 10px;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .dignity-marker {
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+        }
+
+        .number-marker {
+            position: absolute;
+            bottom: 2px;
+            right: 4px;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        /* Zodiac Sign Colors */
+        .aries { background: #ff0000; color: #fff; }
+        .taurus { background: #ff8800; color: #000; }
+        .gemini { background: #ffaa00; color: #000; }
+        .cancer { background: #ffdd00; color: #000; }
+        .leo { background: #ffff00; color: #000; }
+        .virgo { background: #00ff00; color: #000; }
+        .libra { background: #00cc66; color: #000; }
+        .scorpio { background: #00cccc; color: #000; }
+        .sagittarius { background: #0000ff; color: #fff; }
+        .capricorn { background: #0044aa; color: #fff; }
+        .aquarius { background: #8800ff; color: #fff; }
+        .pisces { background: #ff00ff; color: #fff; }
+
+        /* Planet Colors */
+        .sun-color { background: #ffff00; color: #000; }
+        .moon-color { background: #8800ff; color: #fff; }
+        .mercury-color { background: #ff8800; color: #000; }
+        .venus-color { background: #00cc66; color: #000; }
+        .mars-color { background: #ff0000; color: #fff; }
+        .jupiter-color { background: #0000ff; color: #fff; }
+        .saturn-color { background: #000000; color: #fff; border: 2px solid #fff !important; }
+        .uranus-color { background: #00cccc; color: #000; }
+        .neptune-color { background: #0044aa; color: #fff; }
+        .pluto-color { background: #8b0000; color: #fff; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #001100;
+            border: 3px solid #0f0;
+            padding: 30px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 40px rgba(0, 255, 0, 0.5);
+            position: relative;
+        }
+
+        .modal-content h2 {
+            color: #0f0;
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #0f0;
+        }
+
+        .modal-content p {
+            color: #0f0;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .modal-content strong {
+            color: #00ff00;
+            text-shadow: 0 0 5px #0f0;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            color: #0f0;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: 'Share Tech Mono', monospace;
+            text-shadow: 0 0 10px #0f0;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+            text-shadow: 0 0 15px #fff;
+        }
+
+        .dignity-section {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid #0f0;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .tarot-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #0f0;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 20px;
+                max-height: 90vh;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+
+            body {
+                padding: 10px;
+            }
+        }
+
+        /* Scrollbar styling */
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #001100;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #0f0;
+            border-radius: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanlines"></div>
+    
+    <div class="container">
+        <header>
+            <h1>CORRESPONDENCE LEGEND</h1>
+            <div class="subtitle">PLANETARY DIGNITIES & TAROT CORRESPONDENCES</div>
+            <div class="subtitle">CLICK SIGN NAMES OR COLORED SQUARES FOR DESCRIPTIONS</div>
+        </header>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-letter">R</div>
+                <div>Rulership</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-letter">E</div>
+                <div>Exaltation</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-letter">D</div>
+                <div>Detriment</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-letter">F</div>
+                <div>Fall</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-letter">#</div>
+                <div>Tarot Minor Arcana</div>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>SIGN</th>
+                        <th>☉ SUN</th>
+                        <th>☽ MOON</th>
+                        <th>☿ MERC</th>
+                        <th>♀ VENUS</th>
+                        <th>♂ MARS</th>
+                        <th>♃ JUP</th>
+                        <th>♄ SAT</th>
+                        <th>♅ URA</th>
+                        <th>♆ NEP</th>
+                        <th>♇ PLU</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const dignityData = [
+            {
+                sign: 'ARIES',
+                ruler: 'Mars',
+                exalt: '',
+                planets: {
+                    sun: { dignity: 'R', number: 3, planet: 'sun' },
+                    moon: { dignity: null, number: null, planet: 'moon' },
+                    mercury: { dignity: null, number: null, planet: 'mercury' },
+                    venus: { dignity: 'D', number: 4, planet: 'venus' },
+                    mars: { dignity: 'R', number: 2, planet: 'mars' },
+                    jupiter: { dignity: null, number: null, planet: 'jupiter' },
+                    saturn: { dignity: 'F', number: null, planet: 'saturn' },
+                    uranus: { dignity: 'E', number: null, planet: 'uranus' },
+                    neptune: { dignity: null, number: null, planet: 'neptune' },
+                    pluto: { dignity: null, number: null, planet: 'pluto' }
+                }
+            },
+            {
+                sign: 'TAURUS',
+                ruler: 'Venus',
+                exalt: 'Moon',
+                planets: {
+                    sun: { dignity: null, number: null, planet: 'sun' },
+                    moon: { dignity: 'E', number: 6, planet: 'moon' },
+                    mercury: { dignity: null, number: 5, planet: 'mercury' },
+                    venus: { dignity: 'R', number: null, planet: 'venus' },
+                    mars: { dignity: 'D', number: null, planet: 'mars' },
+                    jupiter: { dignity: null, number: null, planet: 'jupiter' },
+                    saturn: { dignity: null, number: 7, planet: 'saturn' },
+                    uranus: { dignity: 'D', number: null, planet: 'uranus' },
+                    neptune: { dignity: null, number: null, planet: 'neptune' },
+                    pluto: { dignity: null, number: null, planet: 'pluto' }
+                }
+            },
+            {
+                sign: 'GEMINI',
+                ruler: 'Mercury',
+                exalt: '',
+                planets: {
+                    sun: { dignity: null, number: 10, planet: 'sun' },
+                    moon: { dignity: null, number: null, planet: 'moon' },
+                    mercury: { dignity: 'R', number: null, planet: 'mercury' },
+                    venus: { dignity: null, number: null, planet: 'venus' },
+                    mars: { dignity: null, number: 9, planet: 'mars' },
+                    jupiter: { dignity: 'D', number: 8, planet: 'jupiter' },
+                    saturn: { dignity: null, number: null, planet: 'saturn' },
+                    uranus: { dignity: null, number: null, planet: 'uranus' },
+                    neptune: { dignity: null, number: null, planet: 'neptune' },
+                    pluto: { dignity: null, number: null, planet: 'pluto' }
+                }
+            },
+            {
+                sign: 'CANCER',
+                ruler: 'Moon',
+                exalt: 'Jupiter',
+                planets: {
+                    sun: { dignity: null, number: null, planet: 'sun' },
+                    moon: { dignity: 'R', number: 4, planet: 'moon' },
+                    mercury: { dignity: null, number: 3, planet: 'mercury' },
+                    venus: { dignity: null, number: 2, planet: 'venus' },
+                    mars: { dignity: 'F', number: null, planet: 'mars' },
+                    jupiter: { dignity: 'E', number: null, planet: 'jupiter' },
+                    saturn: { dignity: 'D', number: null, planet: 'saturn' },
+                    uranus: { dignity: null, number: null, planet: 'uranus' },
+                    neptune: { dignity: null, number: null, planet: 'neptune' },
+                    pluto: { dignity: null, number: null, planet: 'pluto' }
+                }
+            },
+            {
+                sign: 'LEO',
+                ruler: 'Sun',
+                exalt: '',
+                planets: {
+                    sun: { dignity: 'R', number: null, planet: 'sun' },
+                    moon: { dignity: null, number: null, planet: 'moon' },
+                    mercury: { dignity: null, number: null, planet: 'mercury' },
+                    venus: { dignity: null, number: null, planet: 'venus' },
+                    mars: { dignity: null, number: 7, planet: 'mars' },
+                    jupiter: { dignity: null, number: 6, planet: 'jupiter' },
+                    saturn: { dignity: 'D', number: 5, planet: 'saturn' },
+                    uranus: { dignity: null, number: null, planet: 'uranus' },
+                    neptune: { dignity: null, number: null, planet: 'neptune' },
+                    pluto: { dignity: null, number: null, planet: 'pluto' }
+                }
+            },
+            {
+                sign: 'VIRGO',
+                ruler: 'Mercury',
+                exalt: '',
+                planets: {
+                    sun: { dignity: 'F', number: 8, planet: 'sun' },
+                    moon: { dignity: null, number: null, planet: 'moon' },
+                    mercury: { dignity: 'R', number: 10, planet: 'mercury' },
+                    venus: { dignity: 'F', number: 9, planet: 'venus' },
+                    mars: { dignity: null, number: null, planet: 'mars' },
+                    jupiter: { dignity: 'D', number: null, planet: 'jupiter' },
+                    saturn: { dignity: null, number: null, planet: 'saturn' },
+                    uranus: { dignity: null, number: null, planet: 'uranus' },
+                    neptune: { dignity: null, number: null, planet: 'neptune' },
+                    pluto: { dignity: null, number: null, planet: 'pluto' }
+                }
+            },
+            {
+                sign: 'LIBRA',
+                ruler: 'Venus',
+                exalt: 'Saturn',
+                planets: {
+                    sun: { dignity: 'F', number: null, planet: 'sun' },
+                    moon: { dignity: null, number: 2, planet: 'moon' },
+                    mercury: { dignity: null, number: null, planet: 'mercury' },
+                    venus: { dignity: 'R', number: null, planet: 'venus' },
+                    mars: { dignity: 'D', number: null, planet: 'mars' },
+                    jupiter: { dignity: null, number: 4, planet: 'jupiter' },
+                    saturn: { dignity: 'E', number: 3, planet: 'saturn' },
+                    uranus: { dignity: null, number: null, planet: 'uranus' },
+                    neptune: { dignity: null, number: null, planet: 'neptune' },
+                    pluto: { dignity: null, number: null, planet: 'pluto' }
+                }
+            },
+            {
+                sign: 'SCORPIO',
+                ruler: 'Mars',
+                exalt: '',
+                planets: {
+                    sun: { dignity: null, number: 6, planet: 'sun' },
+                    moon: { dignity: 'F', number: null, planet: 'moon' },
+                    mercury: { dignity: null, number: null, planet: 'mercury' },
+                    venus: { dignity: 'D', number: 7, planet: 'venus' },
+                    mars: { dignity: 'R', number: 5, planet: 'mars' },
+                    jupiter: { dignity: null, number: null, planet: 'jupiter' },
+                    saturn: { dignity: null, number: null, planet: 'saturn' },
+                    uranus: { dignity: null, number: null, planet: 'uranus' },
+                    neptune: { dignity: null, number: null, planet: 'neptune' },
+                    pluto: { dignity: 'R', number: null, planet: 'pluto' }
+                }
+            },
+            {
+                sign: 'SAGITTARIUS',
+                ruler: 'Jupiter',
+                exalt: '',
+                planets: {
+                    sun: { dignity: null, number: null, planet: 'sun' },
+                    moon: { dignity: null, number: 9, planet: 'moon' },
+                    mercury: { dignity: 'D', number: 8, planet: 'mercury' },
+                    venus: { dignity: null, number: null, planet: 'venus' },
+                    mars: { dignity: null, number: null, planet: 'mars' },
+                    jupiter: { dignity: 'R', number: null, planet: 'jupiter' },
+                    saturn: { dignity: null, number: 10, planet: 'saturn' },
+                    uranus: { dignity: null, number: null, planet: 'uranus' },
+                    neptune: { dignity: null, number: null, planet: 'neptune' },
+                    pluto: { dignity: null, number: null, planet: 'pluto' }
+                }
+            },
+            {
+                sign: 'CAPRICORN',
+                ruler: 'Saturn',
+                exalt: 'Mars',
+                planets: {
+                    sun: { dignity: null, number: 4, planet: 'sun' },
+                    moon: { dignity: 'D', number: null, planet: 'moon' },
+                    mercury: { dignity: null, number: null, planet: 'mercury' },
+                    venus: { dignity: null, number: 3, planet: 'venus' },
+                    mars: { dignity: 'E', number: null, planet: 'mars' },
+                    jupiter: { dignity: 'F', number: 2, planet: 'jupiter' },
+                    saturn: { dignity: 'R', number: null, planet: 'saturn' },
+                    uranus: { dignity: 'F', number: null, planet: 'uranus' },
+                    neptune: { dignity: null, number: null, planet: 'neptune' },
+                    pluto: { dignity: null, number: null, planet: 'pluto' }
+                }
+            },
+            {
+                sign: 'AQUARIUS',
+                ruler: 'Saturn',
+                exalt: '',
+                planets: {
+                    sun: { dignity: 'D', number: null, planet: 'sun' },
+                    moon: { dignity: null, number: 7, planet: 'moon' },
+                    mercury: { dignity: null, number: 6, planet: 'mercury' },
+                    venus: { dignity: null, number: 5, planet: 'venus' },
+                    mars: { dignity: null, number: null, planet: 'mars' },
+                    jupiter: { dignity: null, number: null, planet: 'jupiter' },
+                    saturn: { dignity: 'R', number: null, planet: 'saturn' },
+                    uranus: { dignity: 'R', number: null, planet: 'uranus' },
+                    neptune: { dignity: null, number: null, planet: 'neptune' },
+                    pluto: { dignity: null, number: null, planet: 'pluto' }
+                }
+            },
+            {
+                sign: 'PISCES',
+                ruler: 'Jupiter',
+                exalt: 'Venus',
+                planets: {
+                    sun: { dignity: null, number: null, planet: 'sun' },
+                    moon: { dignity: null, number: null, planet: 'moon' },
+                    mercury: { dignity: 'D,F', number: null, planet: 'mercury' },
+                    venus: { dignity: 'E', number: null, planet: 'venus' },
+                    mars: { dignity: null, number: 10, planet: 'mars' },
+                    jupiter: { dignity: 'R', number: 9, planet: 'jupiter' },
+                    saturn: { dignity: null, number: 8, planet: 'saturn' },
+                    uranus: { dignity: null, number: null, planet: 'uranus' },
+                    neptune: { dignity: 'R', number: null, planet: 'neptune' },
+                    pluto: { dignity: null, number: null, planet: 'pluto' }
+                }
+            }
+        ];
+
+        const planetaryDescriptions = {
+            sun: {
+                ARIES: "The Sun in Aries burns with primal fire, embodying the archetype of the pioneer and warrior. This energy expresses itself through bold initiative, fearless action, and an unwavering sense of self. Leadership flows naturally, not from ambition but from authentic confidence. These individuals blaze trails others fear to walk, driven by an inner imperative to assert their unique will upon the world. They carry the spark of pure becoming, the force that initiates all cycles. Competition excites rather than intimidates, challenges invigorate rather than discourage. Their vitality is raw and immediate, their identity forged in the crucible of direct experience.",
+                TAURUS: "The Sun in Taurus grounds solar radiance in earthly substance, expressing vitality through sensory experience and material creation. These individuals understand that true power requires stability, that lasting influence emerges from patient cultivation rather than flashy display. They possess remarkable endurance and determination, capable of sustaining effort long after others have exhausted themselves. Their sense of self connects deeply to the physical world—they know who they are through what they build, what they create with their hands, what they bring into material form. Pleasure and beauty hold deep significance, not as indulgences but as affirmations of life's worthiness. They move with deliberate grace, resisting pressure to rush or change course without careful consideration.",
+                GEMINI: "The Sun in Gemini illuminates the realm of ideas, communication, and intellectual connection. These individuals express their core identity through language, curiosity, and the endless play of mental association. They possess quicksilver intelligence that moves rapidly between subjects, synthesizing disparate information into novel patterns. Their vitality depends on variety and mental stimulation—stagnation suffocates their spirit more than any physical constraint. They understand instinctively that reality is constructed through narrative, that how we speak about things shapes what they become. Connection matters profoundly, not through emotional intensity but through the meeting of minds, the spark that ignites when ideas collide. They are natural translators, moving between worlds with linguistic dexterity.",
+                CANCER: "The Sun in Cancer expresses its light through emotional depth, nurturing capacity, and profound connection to roots and origin. These individuals understand that true strength includes vulnerability, that protection requires sensitivity, that to shelter others we must first know what it means to need shelter ourselves. Their identity intertwines with family, heritage, and the lineages—biological or chosen—that provide context for who they are becoming. They possess intuitive wisdom about human needs, able to sense what others require before words are spoken. Their vitality waxes and wanes with emotional tides, requiring periods of retreat and renewal. They create sanctuary wherever they go, transforming space into emotionally nourishing environment.",
+                LEO: "The Sun in Leo shines with maximum radiance, expressing solar nature with joy, creativity, and generous warmth. This is the Sun at home in its own domain, embodying noble spirit and authentic self-expression without apology or hesitation. These individuals carry natural authority that comes not from external validation but from unwavering connection to their own center. They understand that true leadership involves bringing light to others, that the heart's courage inspires more powerfully than any strategic manipulation. Their creativity flows from pure joy of expression rather than commercial calculation. They possess remarkable capacity for loyalty and generosity, giving freely from their abundant spirit. Pride, when balanced, becomes dignified self-respect rather than hollow arrogance.",
+                VIRGO: "The Sun in Virgo expresses itself through discernment, service, and the sacred art of refinement. These individuals understand that perfection is not an end state but an ongoing process of improvement, adjustment, and skilled attention to detail. Their identity connects to their usefulness, their capacity to analyze situations and provide practical solutions. They possess remarkable powers of observation, noticing what others overlook, seeing the small adjustments that create significant impact. Their vitality depends on having meaningful work that allows them to apply their considerable analytical gifts. Health and wellness matter deeply, not from vanity but from understanding that the body is an instrument requiring proper maintenance. They serve best when they remember that perfection includes accepting imperfection.",
+                LIBRA: "The Sun in Libra seeks to express its nature through relationship, balance, and the pursuit of harmony. These individuals understand identity as fundamentally relational—they discover who they are through interaction with others, through the mirror of partnership and social engagement. Justice matters profoundly, not as abstract principle but as lived commitment to fairness and equitable treatment. They possess natural diplomatic gifts, able to see multiple perspectives and find common ground where others see only opposition. Beauty and aesthetics shape their world, not as superficial concerns but as expressions of the human need for grace and proportion. Their challenge involves developing autonomous selfhood while honoring their relational nature, learning to create balance without losing their center.",
+                SCORPIO: "The Sun in Scorpio expresses its light through intensity, transformation, and unflinching engagement with life's depths. These individuals possess remarkable emotional power and penetrating insight, able to perceive what others hide or deny. Their vitality connects to authentic experience—they would rather feel everything, even pain, than live in comfortable numbness. They understand instinctively that death and regeneration are inseparable, that true power comes from surrendering to inevitable transformation rather than resisting change. They form bonds of tremendous loyalty and depth, but betrayal wounds them profoundly. Their identity emerges through crisis and renewal, through the periodic death of outdated self-concepts. They seek truth with relentless determination, unafraid to investigate shadows others avoid.",
+                SAGITTARIUS: "The Sun in Sagittarius burns with expansive fire, seeking truth, meaning, and unlimited horizon. These individuals express their nature through exploration—physical, intellectual, and spiritual. They possess natural optimism rooted not in naivety but in faith that life contains inherent meaning worth discovering. Their identity connects to their beliefs, their philosophy, their understanding of life's larger patterns. They require freedom like others require air, experiencing any constraint as suffocation of spirit. Teaching and learning form natural expressions of their solar nature, as they seek to share discovered wisdom and expand their understanding through exchange with diverse perspectives. Their enthusiasm inspires others, though they must learn that not everyone shares their need for constant movement and growth.",
+                CAPRICORN: "The Sun in Capricorn embodies determination and practical ambition, expressing itself through achievement, responsibility, and the patient work of building something lasting. These individuals define themselves through accomplishment, through what they create that endures beyond immediate gratification. They possess remarkable self-discipline and capacity for sustained effort, understanding that worthwhile goals require time and persistent dedication. Authority comes naturally, not from domination but from earned respect and demonstrated competence. Their vitality increases with challenge—obstacles that discourage others only strengthen their resolve. They understand time as ally rather than enemy, recognizing that some things cannot be rushed. Their identity matures through taking on increasing responsibility and meeting the test of real-world demands.",
+                AQUARIUS: "The Sun in Aquarius expresses itself through innovation, intellectual independence, and commitment to collective evolution. These individuals understand identity as both unique and universal—they are distinctive individuals who find meaning through contributing to something larger than themselves. They possess natural capacity for objectivity and rational analysis, able to step back from emotional entanglement to see patterns and possibilities others miss. Freedom matters profoundly, not as license but as the space required for authentic self-expression and innovative thinking. They often feel ahead of their time, perceiving future developments before they become apparent to the mainstream. Community and friendship provide essential context for their identity, though they maintain fierce independence within those connections.",
+                PISCES: "The Sun in Pisces expresses solar nature through compassion, imagination, and mystical sensitivity. These individuals possess permeable boundaries that allow them to merge with others' experience, to feel what others feel, to imagine what might be rather than only what is. Their identity connects to the transpersonal realm, to art, spirituality, and the collective unconscious. They understand suffering intimately, which grants them remarkable capacity for empathy and healing presence. Their creativity flows from direct access to archetypal imagery and emotional truth. Their challenge involves maintaining enough selfhood to function in material reality while honoring their gift for transcendence. They must learn to ground their spiritual sensitivity in embodied practice, to bring their visions into form without losing their essential fluidity."
+            },
+            moon: {
+                ARIES: "The Moon in Aries creates an emotional landscape characterized by immediacy, intensity, and spontaneous reaction. These individuals process feelings through action rather than reflection, requiring swift expression and resolution of emotional tension. Their emotional security depends on independence and the freedom to respond authentically without constraint. They approach their inner world with the same directness they bring to external challenges, uncomfortable with prolonged emotional ambiguity. Anger surfaces quickly but dissipates just as fast, leaving no lingering resentment. They need to feel brave, capable, and autonomous in their emotional life, experiencing vulnerability as weakness rather than strength.",
+                TAURUS: "The Moon in Taurus creates emotional nature that craves stability, comfort, and sensory reassurance. These individuals find security through material consistency, physical pleasure, and the reliable rhythms of daily life. Their feelings move slowly and run deep, resisting sudden change or emotional disruption. They process emotions through embodied experience—touch, taste, sound, the felt sense of being in a stable, beautiful environment. Once emotionally invested, they demonstrate remarkable loyalty and steadfastness. Their challenge involves learning that true security cannot be permanently fixed, that some change is inevitable and even beneficial. They nurture others through providing material comfort and steady presence.",
+                GEMINI: "The Moon in Gemini processes emotions through intellect, language, and social connection. These individuals require variety and mental stimulation to feel emotionally secure, experiencing stagnation as deeply threatening. They think about their feelings rather than simply experiencing them, creating narratives that help make sense of inner experience. Communication becomes essential for emotional processing—they often don't know what they feel until they articulate it. Their moods shift rapidly, influenced by information, conversation, and changing mental focus. They need intellectual companionship and diverse social interaction to feel emotionally fulfilled. Their challenge involves deepening emotional experience beyond surface-level processing, allowing feelings to exist without immediately translating them into words.",
+                CANCER: "The Moon in Cancer dwells in its own domain, expressing lunar nature with maximum authenticity and power. These individuals possess profound emotional depth and intuitive understanding of human needs. Their security depends on family, home, and belonging to lineages that provide emotional context. They nurture others naturally and powerfully, creating sanctuary wherever they go. Their feelings run deep and often remain hidden beneath protective layers, revealed only to those who have earned complete trust. They remember emotional experiences with remarkable clarity, carrying both wounds and joys across years. Their challenge involves maintaining appropriate boundaries while honoring their gift for emotional merging and empathetic connection.",
+                LEO: "The Moon in Leo requires appreciation, recognition, and opportunities for creative emotional expression. These individuals possess warm, generous emotional nature that gives freely from the heart. They approach feelings with dramatic flair, experiencing life as ongoing performance where authenticity includes theatrical presentation. Their security depends on being seen, valued, and celebrated for their unique qualities. They nurture through encouragement, validation, and helping others recognize their own specialness. Pride influences their emotional life profoundly—they need to maintain dignity even in vulnerability. Their challenge involves accepting that not every emotional moment requires audience or applause, that quiet intimacy can be as fulfilling as public recognition.",
+                VIRGO: "The Moon in Virgo analyzes and organizes emotional experience, seeking to understand feelings through systematic examination. These individuals find security through usefulness, order, and the knowledge that they are handling their inner world properly. They nurture through practical service, showing care through helpful actions rather than effusive declarations. Their emotional life requires routines, healthy habits, and clear sense of purpose. They tend to criticize themselves harshly for emotional imperfection, applying impossibly high standards to their inner world. Their challenge involves accepting that feelings cannot always be refined or improved, that emotional messiness is part of being human, that vulnerability need not be perfected before it is shared.",
+                LIBRA: "The Moon in Libra requires harmony, partnership, and aesthetic beauty for emotional security. These individuals process feelings through relationship, often needing another person's presence to fully understand their inner world. They seek emotional balance and become unsettled by conflict, discord, or harsh emotional weather. Beauty and grace matter deeply in their emotional life—they need surroundings and relationships that reflect refinement and consideration. They nurture through creating pleasant atmosphere and facilitating connection between people. Their challenge involves developing autonomous emotional selfhood, learning to know what they feel without requiring external validation or mediation through partnership.",
+                SCORPIO: "The Moon in Scorpio creates emotional intensity and depth that can be overwhelming both to self and others. These individuals experience feelings as matter of life and death, incapable of superficial emotional engagement. Their security depends on complete trust and absolute honesty—anything less feels like betrayal. They possess remarkable emotional resilience and regenerative capacity, able to transform profound pain into deeper wisdom. They see through emotional facades with penetrating clarity, perceiving what others hide or deny. Their challenge involves learning that not every interaction requires total emotional intensity, that sometimes surface-level connection serves legitimate purposes, that vulnerability need not always mean complete exposure.",
+                LIBRA: "The Moon in Libra requires harmony, partnership, and aesthetic balance for emotional wellbeing. Feelings are processed through relationship—they often need to discuss emotions with others to fully understand them. Conflict and discord create deep discomfort; they instinctively seek to restore peace and mutual understanding. Beauty and grace in environment and relationship provide emotional nourishment. They nurture through creating pleasant atmosphere, facilitating connection, and helping others find balance. Their challenge involves developing independent emotional clarity without always needing external validation or mediation through partnership.",
+                SAGITTARIUS: "The Moon in Sagittarius requires freedom, meaning, and philosophical context for emotional security. These individuals process feelings through seeking broader perspective, finding comfort in understanding rather than dwelling in raw emotion. They need space—both physical and psychological—to feel emotionally healthy. Optimism characterizes their emotional disposition, as they instinctively look for the lesson or growth opportunity in difficult experiences. Travel, learning, and exposure to different worldviews provide emotional nourishment. Their challenge involves staying present with difficult feelings rather than immediately seeking escape through philosophy, humor, or physical movement.",
+                CAPRICORN: "The Moon in Capricorn approaches emotions with restraint, discipline, and practical consideration. These individuals find security through achievement, structure, and demonstrated competence. They possess remarkable emotional endurance, capable of weathering storms that would overwhelm others. Their feelings often remain private, revealed only when absolutely necessary or appropriate. They nurture through providing stability, taking responsibility, and creating secure foundations. Time becomes their ally as emotional maturity deepens with age. Their challenge involves allowing vulnerability, accepting that emotional needs are not weaknesses to be overcome but natural requirements deserving attention and care.",
+                AQUARIUS: "The Moon in Aquarius processes emotions intellectually, maintaining objective distance even from their own feelings. These individuals find security through community, friendship, and progressive ideals. They need independence in emotional life, resisting any form of emotional dependency. Their feelings often focus on collective rather than personal concerns—they may feel more comfortable addressing humanity's suffering than their own intimate emotional needs. They nurture through sharing ideas, facilitating group connection, and creating space for individual expression. Their challenge involves accepting emotional vulnerability and intimate emotional exchange without losing their essential need for independence and rational clarity.",
+                PISCES: "The Moon in Pisces creates boundless emotional sensitivity and psychic receptivity. These individuals absorb feelings from their environment like sponges, often struggling to distinguish their own emotions from those of others. They find security through spiritual connection, artistic expression, and compassionate service. Their inner world is rich with imagination, dreams, and intuitive knowing that transcends rational explanation. They nurture through empathetic presence and unconditional acceptance. They process emotions through creating art, meditation, or merging with something larger than individual self. Their challenge involves maintaining enough boundary to function without becoming overwhelmed by the ocean of feeling they naturally access."
+            },
+            mercury: {
+                ARIES: "Mercury in Aries thinks with speed, directness, and pioneering initiative. These individuals process information rapidly, often reaching conclusions before others have finished articulating the question. Their communication style is bold and assertive, favoring direct statements over diplomatic nuance. They excel at quick decision-making and thrive in situations requiring immediate mental response. Ideas excite them most when they're new, original, or challenge existing assumptions. They learn through doing rather than lengthy theoretical preparation. Their challenge involves developing patience for details and consideration of others' perspectives rather than rushing toward conclusions.",
+                TAURUS: "Mercury in Taurus creates a thinking style that is deliberate, practical, and methodical. These individuals process information thoroughly, preferring to fully understand before moving forward. Their communication is clear, measured, and grounded in tangible reality. They think in terms of practical application, sensory experience, and material consequence. Learning requires time—they absorb information slowly but retain it permanently. They excel at translating abstract concepts into concrete terms. Their challenge involves adapting to rapid change and considering possibilities that lack immediate practical application.",
+                GEMINI: "Mercury in Gemini operates in its home domain, expressing quicksilver intelligence with maximum fluency and versatility. These individuals possess natural facility with language, information, and intellectual connection. Their minds move rapidly between subjects, synthesizing diverse input into novel patterns. They communicate with wit, charm, and remarkable adaptability to audience. They learn through variety and mental stimulation, requiring multiple interests and diverse information sources. Their challenge involves developing depth alongside their natural breadth, completing thoughts before moving to the next subject, translating their rapid mental processing into sustained focus.",
+                CANCER: "Mercury in Cancer thinks through feeling, intuition, and memory. These individuals process information emotionally, evaluating ideas based on how they resonate with inner knowing rather than logical analysis alone. Their communication style is indirect, suggestive, and deeply personal. They remember conversations, facts, and information through emotional association—they may forget data but remember how something made them feel. They learn best in emotionally safe environments. They think in terms of narrative and context rather than isolated facts. Their challenge involves developing objectivity and communicating clearly when emotional investment clouds rational expression.",
+                LEO: "Mercury in Leo thinks with confidence, creativity, and dramatic flair. These individuals communicate with natural authority and personal warmth, making ideas come alive through storytelling and passionate delivery. They process information through creative interpretation, seeking ways to make ideas engaging and memorable. Pride influences their thinking—they need to maintain dignity even when wrong. They excel at inspiring others through communication and presenting information in entertaining, accessible ways. Their challenge involves listening as attentively as they speak, considering that others' ideas may be equally valuable, maintaining openness to feedback that challenges their convictions.",
+                VIRGO: "Mercury in Virgo expresses analytical power with precision, discernment, and practical focus. These individuals possess remarkable capacity for detailed analysis and systematic thinking. They communicate clearly, efficiently, and with attention to accuracy. They notice what others overlook, seeing the small errors that create large consequences. They think in terms of improvement, refinement, and practical application. Learning comes through methodical study and hands-on experience. Their challenge involves accepting that some things cannot be perfected, that analysis has limits, that overthinking can be as problematic as insufficient thought.",
+                GEMINI: "Mercury in Gemini dwells in its ruling sign, expressing mental agility with natural ease and versatility. These individuals think quickly, communicate fluently, and adapt intellectual approach to varied situations. They excel at making connections between disparate ideas and translating between different contexts or audiences. Curiosity drives their thinking—they must understand how things work, what connects to what, why things are as they are. Learning requires variety and mental stimulation. Their challenge involves developing sustained focus and depth alongside their natural breadth and versatility.",
+                LIBRA: "Mercury in Libra thinks through consideration of multiple perspectives, seeking balance and fairness in understanding. These individuals possess diplomatic communication style, able to present ideas with grace and consideration for how they will be received. They think in terms of relationships, comparisons, and relative values rather than absolute statements. Justice and equity concern them intellectually—they analyze situations to determine what's fair. They learn through discussion and dialectical exchange. Their challenge involves making decisions without endless weighing of options, expressing opinions firmly when necessary rather than always maintaining diplomatic neutrality.",
+                SCORPIO: "Mercury in Scorpio thinks with intensity, penetration, and strategic depth. These individuals perceive what others hide, thinking in terms of hidden motives, power dynamics, and psychological truth. Their communication can be powerful and transformative, though they often keep their most important thoughts private. They research obsessively, needing to understand subjects thoroughly. They think in terms of essence rather than surface, seeking core truths beneath superficial appearances. Their challenge involves communicating more openly, trusting others with their insights, accepting that not everything requires deep analysis or strategic consideration.",
+                SAGITTARIUS: "Mercury in Sagittarius thinks expansively, philosophically, and with optimistic vision. These individuals process information by seeking larger patterns, broader contexts, and ultimate meanings. They communicate with enthusiasm and inspirational energy, making ideas exciting and accessible. They think in terms of possibilities, future developments, and growth potential. Learning thrives through exploration, travel, and exposure to diverse perspectives. Their challenge involves attending to details, completing thorough analysis before jumping to conclusions, communicating with precision rather than broad generalization.",
+                CAPRICORN: "Mercury in Capricorn thinks strategically, practically, and with serious purpose. These individuals process information through lens of utility and real-world application. They communicate with authority and measured consideration, preferring substantial content over clever wordplay. They think in terms of structure, hierarchy, and long-term consequences. They learn through experience and respect traditional knowledge. Their challenge involves embracing intellectual playfulness, considering abstract possibilities alongside practical concerns, communicating warmth alongside competence.",
+                AQUARIUS: "Mercury in Aquarius thinks with innovative originality and intellectual independence. These individuals question conventional wisdom naturally, seeking truth beyond accepted narratives. They communicate with objectivity and rational clarity, able to discuss even emotional topics with detached analysis. They think in terms of systems, patterns, and future possibilities. They excel at understanding complex theories and abstract concepts. Their challenge involves connecting intellectual understanding to emotional reality, communicating in ways that reach people's hearts as well as their minds.",
+                PISCES: "Mercury in Pisces thinks through intuition, imagination, and symbolic association. These individuals process information holistically, perceiving meanings that transcend logical analysis. Their communication style is poetic, suggestive, and deeply empathetic. They think in terms of stories, metaphors, and emotional truth rather than literal facts. They learn through osmosis and creative engagement rather than methodical study. Their challenge involves communicating clearly in practical matters, grounding intuitive insights in concrete expression, developing discernment alongside their gift for universal understanding."
+            },
+            venus: {
+                ARIES: "Venus in Aries approaches love with passionate directness and immediate desire. These individuals fall quickly, love boldly, and pursue relationship with the same courage they bring to other challenges. They value independence even in partnership, requiring freedom to maintain autonomous identity. Their affection expresses through action more than sentiment—they demonstrate love through doing rather than endless verbal declaration. They're drawn to challenge and excitement in relationship, potentially losing interest once conquest is complete. Their challenge involves developing patience, sustaining commitment beyond initial passion, balancing independence with genuine intimacy.",
+                TAURUS: "Venus in Taurus dwells in its home domain, expressing love through sensory pleasure, physical affection, and steadfast loyalty. These individuals value stability, beauty, and material comfort in relationship. They demonstrate affection through touch, shared meals, and creating beautiful environments. They love slowly but deeply, forming attachments that endure through time. Possessiveness can emerge from their need for security. They appreciate quality and refinement, seeking partners who share aesthetic sensibilities. Their challenge involves accepting change in relationship, releasing control, maintaining flexibility alongside their natural desire for consistency.",
+                GEMINI: "Venus in Gemini requires mental stimulation and varied social experience to feel fulfilled in love. These individuals are drawn to intelligence, wit, and communicative skill. They express affection through words, playful interaction, and sharing ideas. They need friendship as foundation for romance, intellectual connection as prerequisite for deeper involvement. Variety prevents boredom—they require relationships that evolve and provide ongoing mental engagement. Their challenge involves deepening emotional commitment beyond mental connection, sustaining focus on one relationship rather than always seeking new stimulation.",
+                CANCER: "Venus in Cancer seeks emotional depth, nurturing connection, and sense of home in relationship. These individuals express love through caretaking, emotional support, and creating sanctuary. They value family, tradition, and shared history. Their affection is tender, protective, and deeply feeling. They form strong attachments and experience relationship losses painfully. Moodiness can influence their loving nature—they need partners who understand emotional fluctuation. Their challenge involves maintaining appropriate boundaries, avoiding codependency, expressing needs directly rather than expecting partners to intuit them.",
+                LEO: "Venus in Leo loves generously, warmly, and with dramatic intensity. These individuals express affection openly and expect appreciation in return. They value romance, passion, and relationships that make them feel special. Loyalty matters profoundly—they give their whole heart and expect complete devotion. They enjoy being admired and showing off their partner. Creative expression and play are essential to their loving nature. Their challenge involves sharing spotlight, accepting that love isn't always grand gestures, maintaining affection even when attention wanes.",
+                VIRGO: "Venus in Virgo expresses love through service, attention to partner's needs, and practical support. These individuals demonstrate affection through helpful actions more than romantic gestures. They value intelligence, competence, and shared work. They can be critical in relationship, holding partners to high standards while simultaneously doubting their own lovability. Health and wellness matter in how they relate. Their challenge involves accepting imperfection in themselves and partners, expressing affection without judgment, receiving love as graciously as they give it.",
+                LIBRA: "Venus in Libra dwells in its home sign, expressing natural grace, diplomatic charm, and deep need for partnership. These individuals find fulfillment through relationship rather than solitude. They value harmony, fairness, and aesthetic beauty. They're skilled at creating pleasant atmosphere and facilitating connection. Their romantic nature is refined and socially aware. Their challenge involves developing autonomous sense of worth beyond relationship, making decisions independently, tolerating necessary conflict rather than maintaining false peace.",
+                SCORPIO: "Venus in Scorpio loves with total intensity and transformative depth. These individuals require complete honesty and profound intimacy. Surface-level relating holds no appeal—they seek soul-deep connection or nothing. Passion runs high, as does jealousy and possessiveness. They form powerful bonds that either transform or destroy. Sexual connection carries emotional and spiritual significance. Their challenge involves maintaining appropriate boundaries, accepting that intensity can be exhausting, learning that love doesn't require total merger to be real.",
+                SAGITTARIUS: "Venus in Sagittarius seeks adventure, growth, and philosophical connection in love. These individuals value freedom, honesty, and shared exploration. They're drawn to foreign cultures, different perspectives, and relationships that expand worldview. Commitment feels constraining unless it includes space for individual growth. They express affection enthusiastically and optimistically. Their challenge involves deepening intimacy alongside freedom, sustaining commitment when adventure wanes, balancing independence with partnership.",
+                CAPRICORN: "Venus in Capricorn approaches love with practical wisdom and serious commitment. These individuals value stability, loyalty, and partnerships that support mutual ambition. They demonstrate affection through providing security and working toward shared goals. Romance develops slowly—they need to trust before opening emotionally. Status and achievement may influence attraction. Their challenge involves expressing warmth and vulnerability, accepting that relationships require emotional expression beyond practical support, allowing playfulness and spontaneity.",
+                AQUARIUS: "Venus in Aquarius requires friendship and intellectual connection as foundation for love. These individuals value independence, progressive ideals, and unconventional relating. They express affection through shared interests and supportive respect for partner's individuality. Emotional intensity or demands for constant intimacy feel suffocating. They're drawn to unique individuals who challenge conventional expectations. Their challenge involves deepening emotional vulnerability, honoring need for closeness alongside independence, accepting that love includes messy feelings not resolved through logic.",
+                PISCES: "Venus in Pisces loves with boundless compassion, romantic idealism, and spiritual depth. These individuals seek transcendent connection, soul-mate union, and relationships that elevate beyond mundane existence. They give selflessly, sometimes to point of self-sacrifice. They perceive partner's potential more clearly than present reality. Boundaries dissolve easily—they merge with partner's emotions and needs. Their challenge involves maintaining healthy separateness, seeing partners realistically, protecting themselves from those who would exploit their generous nature."
+            },
+            mars: {
+                ARIES: "Mars in Aries dwells in its home domain, expressing pure warrior energy with direct force and fearless initiative. These individuals act immediately on desire, moving from impulse to execution with remarkable speed. Competition energizes rather than intimidates them. Physical courage comes naturally, as does leadership in crisis. Anger surfaces quickly and intensely but dissipates just as fast. They pioneer new approaches and blaze trails others follow. Their challenge involves developing patience, considering consequences, tempering aggression with wisdom.",
+                TAURUS: "Mars in Taurus channels drive through steady persistence and determined follow-through. These individuals build their goals methodically, possessing remarkable endurance. Physical strength and stamina characterize their approach. Once committed, they pursue objectives with stubborn determination. Anger builds slowly but explodes powerfully when finally triggered. They work best with tangible results. Sensual pleasure motivates as strongly as ambition. Their challenge involves adapting when circumstances require rapid change, releasing goals that no longer serve.",
+                GEMINI: "Mars in Gemini expresses drive through mental agility and verbal dexterity. These individuals pursue multiple goals simultaneously, becoming bored with single-minded focus. They fight with words, debate, and strategic thinking. Physical restlessness accompanies mental energy. They motivate through curiosity and variety. Anger expresses through sharp words and cutting logic. Their challenge involves completing what they start, channeling scattered energy, developing sustained focus alongside their versatile approach.",
+                CANCER: "Mars in Cancer channels drive through emotional motivation and protective instinct. These individuals fight fiercely for family and defend what they care about with surprising aggression. Their anger connects to emotional wounds, surfacing as passive-aggressive behavior when they avoid direct confrontation. Mood influences their energy significantly. Intuition guides their actions. Their challenge involves expressing anger directly, acting from present desire rather than old hurts, maintaining appropriate boundaries in conflict.",
+                LEO: "Mars in Leo expresses drive with confidence, creativity, and dramatic flair. These individuals pursue goals passionately and generously. Pride fuels their ambition—they need to achieve with style and receive recognition. Physical courage combines with theatrical presence. They lead naturally and inspire others through example. Anger surfaces as wounded dignity. Their challenge involves sharing leadership, accepting feedback, pursuing goals without requiring constant applause.",
+                VIRGO: "Mars in Virgo channels drive through practical service and efficient action. These individuals pursue goals methodically, analyzing best approaches and refining techniques. They work tirelessly when serving meaningful purpose. Physical energy connects to daily routines. Anger expresses as criticism of imperfection. They excel at troubleshooting and improving systems. Their challenge involves accepting that perfection is impossible, acting despite anxiety about doing things correctly.",
+                LIBRA: "Mars in Libra pursues goals through collaboration and diplomatic strategy. These individuals prefer to act in partnership rather than alone. Conflict makes them uncomfortable—they fight for fairness and justice rather than personal victory. Passive-aggressive tendencies emerge when avoiding direct confrontation. They excel at strategic thinking and reading social dynamics. Their challenge involves acting decisively despite uncertainty, expressing anger directly, developing autonomous drive.",
+                SCORPIO: "Mars in Scorpio expresses drive with intensity, strategic depth, and transformative power. These individuals pursue goals with total commitment and remarkable focus. Sexual energy runs high. They fight with psychological insight and strategic patience. Betrayal triggers formidable anger. Power dynamics influence their actions significantly. Their challenge involves releasing control, accepting that not every situation requires maximum intensity, forgiving rather than seeking revenge.",
+                SAGITTARIUS: "Mars in Sagittarius channels drive through exploration, belief, and adventurous spirit. These individuals pursue goals with optimistic enthusiasm and far-reaching vision. Physical activity and travel energize them. They fight for philosophical principles and higher ideals. Anger surfaces as righteous indignation. Restlessness prevents sustained focus on single goals. Their challenge involves completing what they start, attending to details, grounding vision in practical action.",
+                CAPRICORN: "Mars in Capricorn expresses drive with disciplined focus and strategic patience. These individuals pursue goals with remarkable endurance and methodical planning. Ambition runs deep and practical. Authority comes naturally. Physical energy sustains over long duration. Anger expresses through controlled, purposeful action. Their challenge involves maintaining flexibility, expressing warmth alongside competence, balancing work with pleasure.",
+                AQUARIUS: "Mars in Aquarius channels drive through innovative thinking and humanitarian ideals. These individuals pursue goals that benefit collective rather than only self. Independent action matters more than following established paths. They fight for progressive causes and future vision. Anger surfaces when freedom is restricted. Unconventional methods characterize their approach. Their challenge involves sustained commitment to individual goals, accepting emotional motivation alongside intellectual conviction.",
+                PISCES: "Mars in Pisces expresses drive through spiritual motivation and compassionate action. These individuals pursue goals that serve others or express creative vision. Boundaries blur—they may lose themselves in causes or relationships. Passive energy can manifest when they avoid direct assertion. They fight for the vulnerable and act from empathy. Their challenge involves developing healthy aggression, maintaining clear direction, protecting their energy while serving others."
+            },
+            jupiter: {
+                ARIES: "Jupiter in Aries expands through courage, initiative, and pioneering spirit. These individuals grow by taking bold action and trusting their instincts. Optimism fuels their willingness to start new ventures. They inspire others through example and leadership. Faith expresses as confidence in their ability to succeed. Risk-taking comes naturally. Their challenge involves tempering enthusiasm with wisdom, learning from experience rather than repeating patterns.",
+                TAURUS: "Jupiter in Taurus expands through cultivating stability, beauty, and material abundance. These individuals grow by developing resources and creating lasting value. They find wisdom in patience and steady effort. Optimism grounds in practical reality. Faith expresses through appreciating life's sensory pleasures. Their challenge involves releasing attachment to material security, embracing growth that requires leaving comfort zones.",
+                GEMINI: "Jupiter in Gemini expands through learning, communication, and intellectual exploration. These individuals grow by gathering information and making connections between ideas. Optimism flows from understanding and mental agility. They find wisdom through variety and diverse perspectives. Faith expresses as belief in human reason and capacity to learn. Their challenge involves developing depth alongside breadth, integrating knowledge into coherent philosophy.",
+                CANCER: "Jupiter in Cancer expands through emotional depth, nurturing, and honoring heritage. These individuals grow by developing emotional intelligence and caring for others. Optimism roots in family and sense of belonging. They find wisdom in understanding human needs. Faith expresses through trust in intuition. Their challenge involves expanding beyond familiar territory, releasing overprotection.",
+                LEO: "Jupiter in Leo expands through creative expression, generous spirit, and joyful celebration. These individuals grow by developing their unique gifts and sharing them with confidence. Optimism flows naturally from their warm nature. They find wisdom through play and authentic self-expression. Faith expresses as trust in life's goodness. Their challenge involves sharing spotlight and learning that generosity includes receiving.",
+                VIRGO: "Jupiter in Virgo expands through refinement, service, and attention to health. These individuals grow by improving systems and serving meaningful purposes. Optimism tempers with practical analysis. They find wisdom in details others overlook. Faith expresses through dedication to useful work. Their challenge involves accepting imperfection and trusting process without over-analysis.",
+                LIBRA: "Jupiter in Libra expands through relationship, diplomacy, and pursuit of justice. These individuals grow by developing social grace and understanding partnership. Optimism flows from belief in human cooperation. They find wisdom through considering multiple perspectives. Faith expresses as trust in fairness. Their challenge involves making independent decisions and tolerating necessary conflict.",
+                SCORPIO: "Jupiter in Scorpio expands through psychological depth, transformation, and embracing intensity. These individuals grow by facing shadow and investigating hidden truths. Optimism emerges through crisis and renewal. They find wisdom in understanding power dynamics. Faith expresses as trust in regeneration. Their challenge involves lightness and releasing need for constant depth.",
+                SAGITTARIUS: "Jupiter in Sagittarius dwells in its home domain, expanding with maximum optimism and philosophical reach. These individuals grow through travel, learning, and seeking truth. Natural faith and enthusiasm characterize their approach. They find wisdom through direct experience of diverse cultures and ideas. Their challenge involves grounding vision in practical reality.",
+                CAPRICORN: "Jupiter in Capricorn expands through disciplined effort and practical achievement. These individuals grow by building lasting structures and earning authority. Optimism grounds in realistic assessment. They find wisdom through experience and responsibility. Faith expresses as trust in hard work. Their challenge involves embracing spontaneity and accepting that growth includes risk.",
+                AQUARIUS: "Jupiter in Aquarius expands through innovation, community, and progressive ideals. These individuals grow by thinking beyond conventions and connecting with diverse groups. Optimism flows from belief in human potential. They find wisdom in understanding social patterns. Faith expresses as trust in collective evolution. Their challenge involves balancing individual growth with collective focus.",
+                PISCES: "Jupiter in Pisces expands through compassion, imagination, and spiritual connection. These individuals grow by developing empathy and creative expression. Optimism flows from faith in transcendent meaning. They find wisdom through mystical experience. Their challenge involves grounding spiritual insight in practical reality and maintaining boundaries."
+            },
+            saturn: {
+                ARIES: "Saturn in Aries must learn to balance action with patience, independence with cooperation. These individuals face challenges around asserting themselves appropriately—either overcompensating with aggression or suppressing natural initiative. Mastery comes through developing disciplined courage and learning when to charge forward versus when to wait. Leadership lessons involve understanding that true authority includes restraint.",
+                TAURUS: "Saturn in Taurus confronts lessons around security, self-worth, and material stability. These individuals may experience scarcity early in life or develop anxious relationship with resources. Mastery comes through building genuine security from within and creating lasting value through patient effort. They learn that true stability cannot be hoarded but must be actively maintained.",
+                GEMINI: "Saturn in Gemini faces challenges in communication, learning, and mental confidence. These individuals may doubt their intelligence or struggle with structured thinking. Mastery comes through developing disciplined study habits and learning to communicate with authority. They discover that true knowledge comes from depth of understanding, not breadth of information.",
+                CANCER: "Saturn in Cancer confronts emotional vulnerability and family responsibilities. These individuals may experience difficulties with nurturing or receiving care. Mastery comes through developing healthy emotional boundaries and learning to nurture themselves first. They discover that true emotional security comes from within, not from others' approval.",
+                LEO: "Saturn in Leo faces lessons around authentic self-expression and ego development. These individuals may struggle with confidence or overcompensate with false bravado. Mastery comes through developing genuine self-respect and learning to shine without needing constant validation. Creative blocks teach them that discipline enhances rather than restricts true expression.",
+                VIRGO: "Saturn in Virgo confronts perfectionism and harsh self-judgment. These individuals set impossibly high standards and criticize themselves mercilessly. Mastery comes through accepting that perfection is impossible and that 'good enough' is genuinely sufficient. They learn that analysis has limits and that service shouldn't become self-sacrifice.",
+                LIBRA: "Saturn in Libra faces lessons in relationship, justice, and autonomous decision-making. These individuals may struggle with codependency or difficulty making independent choices. Mastery comes through learning to create balance while maintaining clear boundaries. They discover that true partnership requires two whole people, not two halves seeking completion.",
+                SCORPIO: "Saturn in Scorpio confronts fear, power, and emotional depth. These individuals face intense lessons around trust, control, and transformation. Mastery comes through accepting vulnerability and learning to share power. They discover that true strength includes surrendering to forces beyond their control and that transformation cannot be managed, only experienced.",
+                SAGITTARIUS: "Saturn in Sagittarius faces challenges around belief systems, higher education, and philosophical development. These individuals may doubt their wisdom or struggle with dogmatic thinking. Mastery comes through developing mature philosophy grounded in experience. They learn that true faith withstands questioning and that wisdom includes acknowledging what they don't know.",
+                CAPRICORN: "Saturn in Capricorn dwells in its home domain, facing maximum responsibility and highest standards for achievement. These individuals carry heavy burdens and hold themselves accountable to strict codes. Mastery comes through patient dedication and accepting that worthwhile goals take time. They learn to balance ambition with self-compassion and to measure success by their own standards.",
+                AQUARIUS: "Saturn in Aquarius confronts lessons around community, innovation, and balancing individual freedom with collective responsibility. These individuals may feel isolated or struggle with belonging. Mastery comes through learning to contribute their unique gifts while respecting group needs. They discover that true progress requires both vision and structure.",
+                PISCES: "Saturn in Pisces faces challenges around boundaries, spiritual development, and grounding mystical gifts. These individuals must learn to bring imagination into form without losing its magic. Mastery comes through disciplined spiritual practice and learning to serve from fullness rather than martyrdom. They discover that compassion must include self-care and that dreams require structure to manifest."
+            },
+            uranus: {
+                ARIES: "Uranus in Aries electrifies individual will with the voltage of revolution. This placement—active 1927–1935 and 2010–2018—seeded radical reinvention of the self, pioneering breakthroughs in identity and personal freedom. Sudden awakenings shatter the old ego structure to reveal something utterly original underneath. Expect innovation born from pure instinct and courage that disrupts before it builds.",
+                TAURUS: "Uranus in Taurus (1934–1942 and 2018–2026) shocks the material world, overturning assumptions about money, land, and what we call security. Revolutionary upheaval moves through economies and ecological systems. What seemed immovable and permanent suddenly cracks open. Liberation arrives through the body and the earth itself, forcing a radical re-evaluation of value, worth, and what it means to truly possess anything.",
+                GEMINI: "Uranus in Gemini (1941–1949) electrified communication, information, and the architecture of thought itself. This generation witnessed the birth of mass media and experienced sudden leaps in how ideas travel. Minds conditioned to rapid-fire change and contradictory truths. Revolution arrives through language, data, and the network—unexpected insight flashing between two seemingly unrelated concepts.",
+                CANCER: "Uranus in Cancer (1948–1956) disrupted home, family, and the emotional foundations of security. This era shattered traditional domestic structures and began reconceiving what family means. Liberation through breaking ancestral patterns. The unexpected intrudes on private life, forcing evolution of emotional inheritance. Security is found not in the familiar but in the willingness to transform what home means.",
+                LEO: "Uranus in Leo (1955–1962) electrified creativity, self-expression, and the very concept of individuality. The counterculture's roots reach here—a generation conditioned to expect that authentic selfhood requires revolution. Unexpected flashes of creative genius shatter convention. Liberation arrives through radical artistic expression and the refusal to perform roles assigned by others.",
+                VIRGO: "Uranus in Virgo (1961–1968) revolutionized work, health, and systems of service. This generation brought innovative reform to medicine, technology, and daily routine. Sudden insights optimize what seemed fixed. Liberation arrives through analytical breakthroughs and unexpected efficiency. The ordinary becomes extraordinary through a flash of novel methodology.",
+                LIBRA: "Uranus in Libra (1968–1975) disrupted partnership, justice, and social contracts. This era saw radical reimagining of relationship structures and legal equality. Sudden shifts in what counts as fair. Liberation arrives through shattering outdated relational templates and discovering unexpected forms of partnership. The scales tip suddenly, then seek an unfamiliar new balance.",
+                SCORPIO: "Uranus in Scorpio (1974–1981) electrified the depths—sexuality, death, shared resources, and psychological transformation. This generation refuses to leave the unconscious undisturbed. Sudden revelations shatter taboos. Liberation arrives through unexpected confrontation with shadow and power. What was hidden cannot remain so; what controlled from below must be exposed and transformed.",
+                SAGITTARIUS: "Uranus in Sagittarius (1981–1988) revolutionized philosophy, belief systems, and the global cultural conversation. This generation questions every received truth and expects sudden expansion of worldview. Liberation arrives through shattering orthodoxy and the exhilarating discovery that the universe is stranger and larger than any doctrine could contain.",
+                CAPRICORN: "Uranus in Capricorn (1988–1996) disrupted institutions, hierarchies, and the very structures of power and authority. This generation instinctively questions the legitimacy of established systems. Liberation arrives through sudden dismantling of what seemed permanent. The mountain moves. What took centuries to build collapses overnight; what replaces it must be more honestly constructed.",
+                AQUARIUS: "Uranus in Aquarius (1995–2003) returns to its home domain, amplifying revolutionary energy to maximum voltage. This generation carries the blueprint for collective reinvention. Liberation arrives through technology, community, and radical reconfiguration of the social contract. The network becomes the revolution itself, and individual awakening spreads at the speed of information.",
+                PISCES: "Uranus in Pisces (2003–2011) shocked the realm of spirituality, imagination, and collective unconscious. Dreams became data; mysticism merged with technology. Sudden dissolution of boundaries between the seen and unseen. Liberation arrives through unexpected spiritual awakening and the recognition that consensus reality is far more fluid than it appears."
+            },
+            neptune: {
+                ARIES: "Neptune in Aries (1861–1875) dissolved the boundaries of individual will, infusing the era with idealistic visions of heroism and national destiny. The self became a canvas for collective dreams and illusions of glory. Spiritual seeking took the form of romantic individualism. Watch for the confusion between genuine courage and grandiose fantasy.",
+                TAURUS: "Neptune in Taurus (1874–1888) clouded material reality with spiritual longing, making the boundary between genuine value and illusory wealth difficult to discern. The era dissolved certainties around money and land. Sensitivity to beauty as a path toward the transcendent. The material world became a vehicle for ineffable longing.",
+                GEMINI: "Neptune in Gemini (1887–1902) dissolved boundaries in language, communication, and the circulation of ideas. Words became incantations, information a fog of competing narratives. The imaginative merger of concepts previously kept separate. Poetry and propaganda both find maximum potency when Neptune clouds the realm of Mercury.",
+                CANCER: "Neptune in Cancer (1901–1916) suffused home, ancestry, and emotional memory with spiritual longing. The homeland became an ideal—beautiful, ineffable, and ultimately illusory. Dissolution of family boundaries. Deep collective longing for belonging and protection. The mother became mythologized, and nostalgia achieved the intensity of religious devotion.",
+                LEO: "Neptune in Leo (1914–1929) dissolved the ego in glamour, collective fantasy, and the dream factory. The era of silent film and jazz saw individual creativity absorbed into mass entertainment and cultural mythology. The self as spectacle. Romantic idealization of fame, luxury, and artistic genius. The roaring twenties as Neptune's fever dream.",
+                VIRGO: "Neptune in Virgo (1928–1943) veiled the realm of work, health, and daily service in spiritual confusion and selfless sacrifice. This era saw collective dissolution through economic collapse and wartime service. Healing became a vocation tinged with martyrdom. The body's needs dissolved in service to something greater. Idealism found expression through practical sacrifice.",
+                LIBRA: "Neptune in Libra (1942–1957) dissolved boundaries in partnership, idealized romance, and social harmony. The era of idealized marriage and the dream of international cooperation through the United Nations. Relationships became vehicles for transcendence. Beauty and love as spiritual imperatives. The confusion between genuine connection and projected fantasy.",
+                SCORPIO: "Neptune in Scorpio (1956–1970) dissolved the veil between surface and depth, between life and death, between the conscious and unconscious. Sexual liberation, psychedelic exploration, and fascination with occult all emerged from this placement. The borders of the psychological self became permeable. Collective immersion in taboo, darkness, and transformational ecstasy.",
+                SAGITTARIUS: "Neptune in Sagittarius (1970–1984) dissolved barriers between spiritual traditions, creating an era of spiritual seeking, New Age exploration, and the blending of Eastern and Western practices. Faith became fluid. The higher truth felt perpetually just beyond reach—inspiring and elusive simultaneously. Idealism about distant cultures and utopian philosophical systems.",
+                CAPRICORN: "Neptune in Capricorn (1984–1998) dissolved the boundaries of institutional authority and material ambition, creating an era of corporate spirituality and confused hierarchies. Power became glamorized. The line between legitimate authority and seductive illusion blurred. Collective longing for meaningful structure amid the collapse of traditional systems.",
+                AQUARIUS: "Neptune in Aquarius (1998–2012) dissolved boundaries between individuals and collectives, between human and digital, between local and global. The internet as Neptune's medium—an infinite, boundless ocean of collective imagination. Community became virtual. The dream of radical human connection obscured by the fog of information and collective fantasy.",
+                PISCES: "Neptune in Pisces (2012–2026) has returned to its home domain, amplifying dissolution, spiritual longing, and the permeability of all boundaries to maximum intensity. Reality itself becomes uncertain. Mass empathy and mass delusion flow from the same oceanic source. The call to transcendence is deafening—whether through genuine spiritual awakening or the escape of addiction and collective fantasy."
+            },
+            pluto: {
+                ARIES: "Pluto in Aries (1823–1852) drove the compulsive transformation of individual will and national identity. Revolutionary energy erupted across the world—independence movements, industrial revolution, the birth of modern nationalism. The self as instrument of historical force. Power expressed through the raw assertion of new beginnings, often violently.",
+                TAURUS: "Pluto in Taurus (1851–1884) drove obsessive transformation of material reality, economic systems, and the very ground beneath human feet. The Gilded Age and the Industrial Revolution permanently altered humanity's relationship to land, labor, and wealth. Destruction and regeneration of what we value. Power expressed through the compulsive accumulation of physical resources.",
+                GEMINI: "Pluto in Gemini (1882–1914) drove the compulsive transformation of information, communication, and the architecture of thought. The era saw the invention of the telephone, radio, and modern media. Ideas became weapons of mass persuasion. Language itself was revealed as a vehicle for extraordinary power. The destruction and regeneration of how humanity shares and processes meaning.",
+                CANCER: "Pluto in Cancer (1913–1939) drove the compulsive transformation of home, family, and national belonging. World War I and II destroyed old nations and created new ones. The homeland became an obsession requiring defense at any cost. Emotional security was shattered to its roots, forcing the evolution of what family and country mean at the deepest level.",
+                LEO: "Pluto in Leo (1937–1958) drove the compulsive transformation of individual power, creative expression, and the concept of the hero. The atomic age. The Cold War. This generation carried the shadow of humanity's potential for self-annihilation and the equally vast potential for creative regeneration. Power expressed through dramatic assertion of individual and national will.",
+                VIRGO: "Pluto in Virgo (1956–1972) drove the compulsive transformation of work, health, and systems of service. The environmental movement, labor reform, and the sexual revolution all emerged from this era's obsessive examination of what we do with our bodies and our daily lives. Destruction and regeneration of the concept of service, purity, and practical mastery.",
+                LIBRA: "Pluto in Libra (1971–1984) drove the compulsive transformation of partnership, justice, and social contracts. Divorce rates skyrocketed while movements for civil rights and equality transformed the legal landscape. Relationships were stripped to their deepest power dynamics. The destruction and regeneration of what fairness, balance, and genuine partnership require.",
+                SCORPIO: "Pluto in Scorpio (1983–1995) returned to its home domain, driving maximum intensity transformation of sexuality, death, shared power, and psychological depth. The AIDS crisis, the collapse of the Soviet Union, the rise of psychological therapy culture—all expressions of this placement's compulsive dismantling and rebuilding of taboo and power. Generation X carries Pluto's darkest gifts.",
+                SAGITTARIUS: "Pluto in Sagittarius (1995–2008) drove the compulsive transformation of belief systems, institutions of higher truth, and the global exchange of ideas. The internet exploded. Religious fundamentalism reached crisis points while established philosophical frameworks crumbled. The destruction and regeneration of what it means to believe, to know, and to seek meaning across cultures.",
+                CAPRICORN: "Pluto in Capricorn (2008–2024) drove the compulsive transformation of institutional authority, governmental structures, and the systems of power that organize civilization. The 2008 financial crisis signaled this era's obsessive dismantling of corrupt hierarchies. Nothing that holds power illegitimately survives. The destruction and regeneration of what genuine authority and earned responsibility require.",
+                AQUARIUS: "Pluto in Aquarius (2024–2044) is now driving the compulsive transformation of collective systems, technological networks, and the very concept of human community. Artificial intelligence, radical democracy, and the collapse of old social contracts mark this era. The destruction and regeneration of what it means to belong, to innovate, and to exercise power as a collective rather than as isolated individuals.",
+                PISCES: "Pluto in Pisces (2044–2068) will drive the compulsive transformation of spiritual frameworks, collective consciousness, and the boundary between the individual soul and the infinite. This era will see the dissolution and regeneration of humanity's deepest relationship to transcendence, to suffering, and to the mystery that underlies all form. The death and rebirth of the dream itself."
+            }
+        };
+
+        const dignityInfo = {
+            R: { name: 'Rulership', desc: 'The planet is in its home sign and expresses its nature most authentically.' },
+            E: { name: 'Exaltation', desc: 'The planet is honored and can express its highest qualities.' },
+            D: { name: 'Detriment', desc: 'The planet is opposite its home sign and may struggle to express naturally.' },
+            F: { name: 'Fall', desc: 'The planet is opposite its exaltation and may feel uncomfortable or weakened.' }
+        };
+
+        const planetNames = {
+            sun: '☉ Sun',
+            moon: '☽ Moon',
+            mercury: '☿ Mercury',
+            venus: '♀ Venus',
+            mars: '♂ Mars',
+            jupiter: '♃ Jupiter',
+            saturn: '♄ Saturn',
+            uranus: '♅ Uranus',
+            neptune: '♆ Neptune',
+            pluto: '♇ Pluto'
+        };
+
+        const elementalSuits = {
+            'ARIES': 'Wands',
+            'LEO': 'Wands',
+            'SAGITTARIUS': 'Wands',
+            'TAURUS': 'Pentacles',
+            'VIRGO': 'Pentacles',
+            'CAPRICORN': 'Pentacles',
+            'GEMINI': 'Swords',
+            'LIBRA': 'Swords',
+            'AQUARIUS': 'Swords',
+            'CANCER': 'Cups',
+            'SCORPIO': 'Cups',
+            'PISCES': 'Cups'
+        };
+
+        const signData = {
+            'ARIES': {
+                mode: 'Cardinal Fire',
+                element: 'Fire',
+                house: '1st House',
+                symbol: 'The Ram',
+                tarot: 'The Emperor (IV)',
+                description: 'The initiating spark of pure becoming. Aries embodies the courage to begin, the will to assert, the primal force of self emerging into manifestation. This is the warrior\'s fearless charge, the pioneer\'s bold journey into unknown territory, the raw vitality of spring\'s first breakthrough. Aries energy acts without hesitation, leads without questioning, exists with unfiltered authenticity. The challenge lies in tempering impulsiveness with wisdom, balancing self-assertion with consideration of others.'
+            },
+            'TAURUS': {
+                mode: 'Fixed Earth',
+                element: 'Earth',
+                house: '2nd House',
+                symbol: 'The Bull',
+                tarot: 'The Hierophant (V)',
+                description: 'The steady force of material manifestation and sensory embodiment. Taurus grounds spirit in flesh, translates vision into tangible form, cultivates beauty through patient dedication. This is the gardener\'s faithful tending, the artist\'s commitment to craft, the body\'s wisdom that knows truth through sensation. Taurus energy builds to last, values quality over quantity, finds meaning in pleasure and earthly abundance. The challenge lies in releasing attachment, embracing necessary change, balancing stability with growth.'
+            },
+            'GEMINI': {
+                mode: 'Mutable Air',
+                element: 'Air',
+                house: '3rd House',
+                symbol: 'The Twins',
+                tarot: 'The Lovers (VI)',
+                description: 'The quicksilver dance of mind meeting world through language and perception. Gemini embodies curiosity\'s restless movement, intelligence\'s playful exploration, communication\'s bridging power. This is the messenger\'s swift journey between realms, the storyteller\'s gift for translation, the eternal student\'s hunger for diverse knowledge. Gemini energy connects, adapts, observes without attachment. The challenge lies in developing depth alongside breadth, completing what is started, finding stillness within constant motion.'
+            },
+            'CANCER': {
+                mode: 'Cardinal Water',
+                element: 'Water',
+                house: '4th House',
+                symbol: 'The Crab',
+                tarot: 'The Chariot (VII)',
+                description: 'The protective shell around tender vulnerability, the tide that ebbs and flows with lunar rhythm. Cancer embodies the nurturer\'s fierce devotion, intuition\'s deep knowing, the sanctuary of home and belonging. This is the mother\'s unconditional care, memory\'s preservation of what matters, emotion\'s raw authenticity. Cancer energy feels deeply, protects instinctively, creates safety through emotional attunement. The challenge lies in maintaining boundaries while staying open, releasing the past while honoring it, protecting without smothering.'
+            },
+            'LEO': {
+                mode: 'Fixed Fire',
+                element: 'Fire',
+                house: '5th House',
+                symbol: 'The Lion',
+                tarot: 'Strength (VIII)',
+                description: 'The radiant heart expressing itself with generous warmth and creative fire. Leo embodies authentic self-expression, dignified presence, the courage to shine without apology. This is the performer\'s gift for bringing joy, the leader\'s natural nobility, the artist\'s passionate dedication to craft. Leo energy celebrates life, gives freely from the heart, demands recognition not from ego but from genuine self-worth. The challenge lies in sharing the spotlight, serving without needing applause, balancing pride with humility.'
+            },
+            'VIRGO': {
+                mode: 'Mutable Earth',
+                element: 'Earth',
+                house: '6th House',
+                symbol: 'The Virgin',
+                tarot: 'The Hermit (IX)',
+                description: 'The discerning eye that distinguishes wheat from chaff, the skilled hand that perfects through practice. Virgo embodies sacred service, analytical precision, the devotion to incremental improvement. This is the healer\'s attention to subtle detail, the craftsperson\'s dedication to excellence, purity of intention applied to practical work. Virgo energy refines, analyzes, serves through competence and care. The challenge lies in accepting imperfection, trusting intuition alongside analysis, recognizing that some things cannot be improved upon.'
+            },
+            'LIBRA': {
+                mode: 'Cardinal Air',
+                element: 'Air',
+                house: '7th House',
+                symbol: 'The Scales',
+                tarot: 'Justice (XI)',
+                description: 'The elegant dance of relationship, the diplomat\'s quest for harmony and balance. Libra embodies the beauty of fair exchange, aesthetic refinement, social grace that smooths rough edges. This is the artist\'s eye for proportion, the mediator\'s gift for seeing all sides, partnership as spiritual practice. Libra energy seeks equilibrium, creates beauty, understands that we know ourselves through relationship with other. The challenge lies in developing autonomous selfhood, accepting necessary discord, making decisions without endless deliberation.'
+            },
+            'SCORPIO': {
+                mode: 'Fixed Water',
+                element: 'Water',
+                house: '8th House',
+                symbol: 'The Scorpion',
+                tarot: 'Death (XIII)',
+                description: 'The descent into psychological depths where transformation occurs through crisis and renewal. Scorpio embodies intensity\'s transformative power, the courage to face what others avoid, intimacy that demands complete honesty. This is the detective\'s penetrating insight, the phoenix rising from ash, sexuality as gateway to transcendence. Scorpio energy investigates shadow, bonds through shared vulnerability, understands that true power comes from surrendering control. The challenge lies in trusting without testing, releasing jealousy and possession, accepting that some mysteries remain unsolved.'
+            },
+            'SAGITTARIUS': {
+                mode: 'Mutable Fire',
+                element: 'Fire',
+                house: '9th House',
+                symbol: 'The Archer',
+                tarot: 'Temperance (XIV)',
+                description: 'The arrow\'s flight toward distant horizons, the philosopher\'s search for ultimate meaning. Sagittarius embodies optimistic faith, intellectual expansion, the wanderer\'s need for freedom and adventure. This is the teacher\'s generous sharing of wisdom, the explorer\'s courage to venture beyond familiar territory, humor that finds lightness in life\'s absurdity. Sagittarius energy seeks truth, expands consciousness, believes in humanity\'s potential for growth. The challenge lies in grounding vision in reality, completing journeys before starting new ones, tempering enthusiasm with practical wisdom.'
+            },
+            'CAPRICORN': {
+                mode: 'Cardinal Earth',
+                element: 'Earth',
+                house: '10th House',
+                symbol: 'The Sea-Goat',
+                tarot: 'The Devil (XV)',
+                description: 'The mountain goat\'s patient climb toward mastery, ambition tempered by pragmatic wisdom. Capricorn embodies disciplined achievement, strategic planning, responsibility embraced as path to power. This is the elder\'s hard-won authority, the architect\'s vision made concrete, time understood as resource requiring careful stewardship. Capricorn energy builds legacy, accepts limitation, succeeds through persistent dedication to long-term goals. The challenge lies in balancing work with pleasure, accepting vulnerability, remembering that efficiency isn\'t everything.'
+            },
+            'AQUARIUS': {
+                mode: 'Fixed Air',
+                element: 'Air',
+                house: '11th House',
+                symbol: 'The Water Bearer',
+                tarot: 'The Star (XVII)',
+                description: 'The lightning flash of revolutionary insight, the humanitarian\'s vision of collective evolution. Aquarius embodies innovative thinking, detached objectivity, the rebel\'s commitment to progressive ideals. This is the inventor\'s breakthrough discovery, the activist\'s fight for social justice, friendship as chosen family. Aquarius energy thinks beyond convention, sees patterns others miss, understands individual freedom as prerequisite for genuine community. The challenge lies in honoring emotion alongside reason, accepting that change requires time, balancing uniqueness with belonging.'
+            },
+            'PISCES': {
+                mode: 'Mutable Water',
+                element: 'Water',
+                house: '12th House',
+                symbol: 'The Fish',
+                tarot: 'The Moon (XVIII)',
+                description: 'The dissolution of boundaries in oceanic consciousness, compassion that embraces all suffering. Pisces embodies mystical sensitivity, artistic imagination, the martyr\'s capacity for self-sacrifice. This is the mystic\'s direct communion with divine, the artist\'s channel for archetypal imagery, unconditional love that sees no separation. Pisces energy dreams, heals through presence, understands that reality is more fluid than it appears. The challenge lies in maintaining boundaries, grounding vision in embodied reality, serving without losing self in the process.'
+            }
+        };
+
+        const tarotDescriptions = {
+            'Wands': {
+                2: 'Bold dominion and personal power. The courage to hold your vision while surveying new territory. Leadership that emerges from authentic will.',
+                3: 'Established strength and confident expansion. Your plans are set in motion; now you watch them unfold with assured anticipation.',
+                4: 'Celebration and completion of foundation. Joyful harmony as initial structures stabilize. Community gathers to honor what has been built.',
+                5: 'Spirited conflict and competitive tension. Growth through challenge and the refining fire of disagreement. Not all battles are meant to be won.',
+                6: 'Victory and public recognition. The triumphant moment when effort meets acclaim. Leadership validated through tangible success.',
+                7: 'Defensive courage and standing your ground. The resilience to maintain position against opposition. Strength found in clear boundaries.',
+                8: 'Swift action and rapid movement. Energy in flight, messages delivered, plans accelerating toward manifestation. The arrow already loosed.',
+                9: 'Wary resilience and battle-tested strength. Guarded wisdom earned through past trials. The last line of defense held with quiet determination.',
+                10: 'Burdensome responsibility and overwhelming duty. Carrying more than your share, approaching the breaking point. The weight before delegation.'
+            },
+            'Pentacles': {
+                2: 'Skillful balance and juggling resources. The dance of managing multiple priorities with grace and adaptability. Change as constant motion.',
+                3: 'Collaborative mastery and skilled contribution. Your talents recognized and put to purposeful work. Building something greater than yourself.',
+                4: 'Cautious preservation and protective boundaries. Holding tight to security, perhaps too tight. The difference between stability and stagnation.',
+                5: 'Material hardship and spiritual testing. Loss that reveals what truly matters. The wisdom found only through experiencing scarcity.',
+                6: 'Generous exchange and balanced reciprocity. The flow of giving and receiving in harmonious proportion. Charity that dignifies all involved.',
+                7: 'Patient cultivation and long-term investment. The pause to assess growth before continuing. Wisdom to wait when action would waste effort.',
+                8: 'Dedicated craftsmanship and apprenticeship. The joy found in perfecting your skill through repetitive practice. Mastery as patient devotion.',
+                9: 'Self-sufficient abundance and refined independence. Success that allows you to enjoy fruits of your labor alone. Luxury earned through discipline.',
+                10: 'Generational wealth and lasting legacy. Abundance that extends beyond individual life. Family, tradition, and the gifts that endure through time.'
+            },
+            'Swords': {
+                2: 'Difficult stalemate and forced truce. Eyes closed to truth you\'re not ready to see. The temporary peace of avoiding hard decisions.',
+                3: 'Heartbreak and painful separation. The sharp wound of betrayal or necessary severance. Sorrow that cannot be intellectualized away.',
+                4: 'Necessary rest and strategic retreat. Mental recuperation after battle. The wisdom to cease striving and simply recover.',
+                5: 'Hollow victory and conflicted triumph. Winning at others\' expense, succeeding in ways that leave you empty. Defeat disguised as conquest.',
+                6: 'Difficult transition and leaving troubled waters. The journey away from pain toward calmer shores. Progress through necessary departure.',
+                7: 'Strategic deception and mental maneuvering. The trickster\'s clever theft, perhaps of your own beliefs. Examine what you\'re taking and why.',
+                8: 'Mental imprisonment and restricted perception. Bound by thoughts, not circumstances. The blindfold you could remove but fear to.',
+                9: 'Anxiety\'s torment and sleepless worry. The mind\'s cruelty to itself. Nightmares more frightening than any reality.',
+                10: 'Painful ending and complete severance. The final blow, the unavoidable conclusion. Destruction that clears ground for new beginning.'
+            },
+            'Cups': {
+                2: 'Sacred union and mutual recognition. Two souls meeting in genuine partnership. Love that sees and honors the other fully.',
+                3: 'Joyful celebration and abundant friendship. Community gathering in emotional harmony. The pleasure of sharing happiness with kindred spirits.',
+                4: 'Emotional withdrawal and contemplative discontent. The soul that refuses what\'s offered, seeking something more. Divine dissatisfaction as spiritual prompt.',
+                5: 'Grief and dwelling on loss. Mourning what\'s gone while failing to see what remains. The necessary pain before turning toward hope.',
+                6: 'Nostalgic innocence and sweet memory. Returning to childhood joy, genuine or imagined. The past as refuge or teacher.',
+                7: 'Illusion and scattered desires. Too many choices leading to fantasy and paralysis. The need to ground dreams in discriminating choice.',
+                8: 'Spiritual seeking and walking away. Leaving emotional fulfillment behind in search of deeper meaning. The courage to abandon what no longer serves.',
+                9: 'Emotional satisfaction and wish fulfillment. The heart\'s contentment, desires met, soul at peace. Gratitude as natural state.',
+                10: 'Emotional completion and harmonious family. Love multiplied and shared across generations. The blessing of belonging and being fully seen.'
+            }
+        };
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            
+            dignityData.forEach(row => {
+                const tr = document.createElement('tr');
+                
+                // Sign cell
+                const signCell = document.createElement('td');
+                signCell.className = `sign-cell ${row.sign.toLowerCase()}`;
+                signCell.textContent = row.sign.slice(0, 3);
+                signCell.style.cursor = 'pointer';
+                signCell.onclick = () => showSignModal(row.sign);
+                tr.appendChild(signCell);
+                
+                // Planet cells
+                Object.keys(row.planets).forEach(planetKey => {
+                    const planetData = row.planets[planetKey];
+                    const planetCell = document.createElement('td');
+                    planetCell.className = 'planet-cell';
+                    
+                    const square = document.createElement('div');
+                    square.className = `planet-square ${planetData.planet}-color`;
+                    
+                    if (planetData.dignity) {
+                        const marker = document.createElement('div');
+                        marker.className = 'dignity-marker';
+                        marker.textContent = planetData.dignity;
+                        square.appendChild(marker);
+                    }
+                    
+                    if (planetData.number) {
+                        const number = document.createElement('div');
+                        number.className = 'number-marker';
+                        number.textContent = planetData.number;
+                        square.appendChild(number);
+                    }
+                    
+                    planetCell.appendChild(square);
+                    planetCell.onclick = () => showModal(row.sign, planetData);
+                    tr.appendChild(planetCell);
+                });
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        function showSignModal(sign) {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modalContent');
+            
+            const info = signData[sign];
+            
+            content.innerHTML = `
+                <h2>${sign}</h2>
+                <div class="dignity-section">
+                    <p><strong>Mode & Element:</strong> ${info.mode}</p>
+                    <p><strong>House:</strong> ${info.house}</p>
+                    <p><strong>Symbol:</strong> ${info.symbol}</p>
+                    <p><strong>Tarot Correspondence:</strong> ${info.tarot}</p>
+                </div>
+                <p style="margin-top: 15px;">${info.description}</p>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        function showModal(sign, planetData) {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modalContent');
+            
+            // Get the planetary description
+            const description = planetaryDescriptions[planetData.planet][sign];
+            
+            // Build dignity section
+            let dignityText = '';
+            if (planetData.dignity) {
+                const dignities = planetData.dignity.split(',');
+                dignityText = '<div class="dignity-section">';
+                dignities.forEach(d => {
+                    const info = dignityInfo[d];
+                    dignityText += `<p><strong>${info.name}:</strong> ${info.desc}</p>`;
+                });
+                dignityText += '</div>';
+            } else {
+                dignityText = '<div class="dignity-section"><p>This planet has no major dignity in this sign.</p></div>';
+            }
+            
+            // Build tarot section
+            let tarotText = '';
+            if (planetData.number) {
+                const suit = elementalSuits[sign];
+                const cardDesc = tarotDescriptions[suit][planetData.number];
+                tarotText = `
+                    <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #0f0;">
+                        <strong>Tarot Correspondence:</strong> ${planetData.number} of ${suit}<br>
+                        <em style="font-size: 10px; opacity: 0.7;">
+                            ${suit === 'Wands' ? 'Fire signs → Wands' : 
+                              suit === 'Cups' ? 'Water signs → Cups' : 
+                              suit === 'Swords' ? 'Air signs → Swords' : 
+                              'Earth signs → Pentacles'}
+                        </em>
+                    </p>
+                    <p style="margin-top: 10px; font-size: 12px; font-style: italic; opacity: 0.9;">
+                        ${cardDesc}
+                    </p>
+                `;
+            }
+            
+            content.innerHTML = `
+                <h2>${planetNames[planetData.planet]} in ${sign}</h2>
+                <p>${description}</p>
+                ${dignityText}
+                ${tarotText}
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Close modal on background click
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') {
+                closeModal();
+            }
+        });
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Mobile scaling: shrink table to fit screen width
+        // Initialize
+        renderTable();
+    </script>
+</body>
+</html>
